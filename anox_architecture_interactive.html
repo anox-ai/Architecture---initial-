@@ -1,0 +1,231 @@
+
+<h2 class="sr-only">ANOX system architecture with interactive vertical slice showing the marine drone seaweed example</h2>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+.wrap{display:grid;grid-template-columns:1fr 1fr;gap:16px;padding:4px 0;font-family:var(--font-sans)}
+.col-label{font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:var(--color-text-tertiary);margin-bottom:8px;font-family:var(--font-mono)}
+.layer{border:0.5px solid var(--color-border-tertiary);border-radius:8px;overflow:hidden;margin-bottom:6px;cursor:pointer;transition:border-color .15s,opacity .15s}
+.layer:hover{border-color:var(--color-border-primary)}
+.layer.active{border-color:var(--color-border-primary);border-width:1.5px}
+.layer.dim{opacity:.4}
+.lh{padding:8px 12px;font-size:12px;font-weight:500;color:#fff;display:flex;justify-content:space-between;align-items:center}
+.lh.gray{background:#888780}.lh.teal{background:#1D9E75}.lh.purple{background:#7F77DD}.lh.coral{background:#D85A30}.lh.blue{background:#378ADD}
+.lh .tag{font-size:10px;opacity:.85;font-weight:400;font-family:var(--font-mono)}
+.lb{padding:8px 12px;font-size:11px;color:var(--color-text-secondary);line-height:1.6;font-family:var(--font-mono);background:var(--color-background-secondary)}
+.learn{border:0.5px dashed var(--color-border-secondary);border-radius:8px;overflow:hidden;cursor:pointer;transition:border-color .15s;margin-top:8px}
+.learn:hover{border-color:var(--color-border-primary)}
+.learn.active{border-color:#1D9E75;border-width:1.5px}
+.learn .lh{background:transparent;color:var(--color-text-secondary);font-size:11px;font-family:var(--font-mono)}
+.learn .lb{background:transparent}
+.detail-wrap{border:0.5px solid var(--color-border-tertiary);border-radius:8px;overflow:hidden;height:100%}
+.detail-header{padding:10px 14px;background:var(--color-background-secondary);border-bottom:0.5px solid var(--color-border-tertiary)}
+.detail-machine{font-size:11px;color:var(--color-text-tertiary);font-family:var(--font-mono);margin-bottom:2px}
+.detail-title{font-size:13px;font-weight:500;color:var(--color-text-primary)}
+.detail-body{padding:14px}
+.step{display:none;animation:fadein .2s ease}
+.step.show{display:block}
+@keyframes fadein{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+.step-layer{font-size:10px;letter-spacing:0.08em;text-transform:uppercase;color:var(--color-text-tertiary);font-family:var(--font-mono);margin-bottom:6px}
+.step-title{font-size:13px;font-weight:500;color:var(--color-text-primary);margin-bottom:8px}
+.step-items{font-size:12px;color:var(--color-text-secondary);line-height:1.8;font-family:var(--font-mono)}
+.step-items .arrow{color:var(--color-text-tertiary);margin:0 4px}
+.step-qs{margin-top:10px;padding-top:10px;border-top:0.5px dashed var(--color-border-tertiary)}
+.q{font-size:11px;color:var(--color-text-tertiary);font-family:var(--font-mono);line-height:1.8}
+.q::before{content:"❓ "}
+.result{background:var(--color-background-secondary);border-radius:6px;padding:10px 12px;margin-top:10px;font-size:12px;font-family:var(--font-mono)}
+.result .rlabel{font-size:10px;text-transform:uppercase;letter-spacing:0.08em;color:var(--color-text-tertiary);margin-bottom:4px}
+.result .rval{color:var(--color-text-primary);font-weight:500}
+.result .rsub{color:var(--color-text-secondary);font-size:11px;margin-top:2px}
+.hint{font-size:11px;color:var(--color-text-tertiary);text-align:center;margin-top:12px;font-family:var(--font-mono)}
+</style>
+
+<div class="wrap">
+  <div>
+    <div class="col-label">System — horizontal architecture</div>
+
+    <div class="layer active" data-id="0" onclick="select(0)">
+      <div class="lh gray">Data model <span class="tag">inputs</span></div>
+      <div class="lb">telemetry · config · logs · maintenance · environment</div>
+    </div>
+
+    <div class="layer" data-id="1" onclick="select(1)">
+      <div class="lh teal">Retrieval model <span class="tag">search</span></div>
+      <div class="lb">chunking · indexing · semantic search · signal mapping</div>
+    </div>
+
+    <div class="layer" data-id="2" onclick="select(2)">
+      <div class="lh purple">Machine representation <span class="tag">knowledge graph</span></div>
+      <div class="lb">subsystems · deps · config · hardware · failure patterns</div>
+    </div>
+
+    <div class="layer" data-id="3" onclick="select(3)">
+      <div class="lh coral">Reasoning system <span class="tag">core</span></div>
+      <div class="lb">hypotheses → elimination → ranking → conclusion</div>
+    </div>
+
+    <div class="layer" data-id="4" onclick="select(4)">
+      <div class="lh blue">Confidence model <span class="tag">scoring</span></div>
+      <div class="lb">evidence scoring · uncertainty · reproducibility</div>
+    </div>
+
+    <div class="layer" data-id="5" onclick="select(5)">
+      <div class="lh gray">Output <span class="tag">result</span></div>
+      <div class="lb">root cause · confidence · elimination chain · action</div>
+    </div>
+
+    <div class="learn" data-id="6" onclick="select(6)">
+      <div class="lh">↻ learning model</div>
+      <div class="lb">incidents → rules → model → feeds back into graph</div>
+    </div>
+  </div>
+
+  <div>
+    <div class="col-label">Vertical slice — marine drone · propulsion · reduced speed</div>
+    <div class="detail-wrap">
+      <div class="detail-header">
+        <div class="detail-machine">machine: marine drone · subsystem: propulsion</div>
+        <div class="detail-title">Scenario: reduced speed anomaly</div>
+      </div>
+      <div class="detail-body">
+
+        <div class="step show" id="step-0">
+          <div class="step-layer">Data model</div>
+          <div class="step-title">Collecting all inputs</div>
+          <div class="step-items">
+            mission log: speed 1.2 kts (expected 3.4)<br>
+            thruster current: 18A (nominal 11A)<br>
+            power system: nominal<br>
+            motor temp: 42°C (normal)<br>
+            GPS: shallow coastal, 0.8m depth<br>
+            maintenance log: thruster serviced 14d ago<br>
+            env context: low tide, kelp zone
+          </div>
+          <div class="step-qs">
+            <p class="q">Which signals are diagnostic vs noise?</p>
+            <p class="q">How to weight environmental context?</p>
+          </div>
+        </div>
+
+        <div class="step" id="step-1">
+          <div class="step-layer">Retrieval model</div>
+          <div class="step-title">Mapping signals to machine structure</div>
+          <div class="step-items">
+            thruster current <span class="arrow">→</span> propulsion.motor<br>
+            speed delta <span class="arrow">→</span> propulsion.output<br>
+            depth + location <span class="arrow">→</span> environment.context<br>
+            maintenance record <span class="arrow">→</span> propulsion.history<br>
+            power readings <span class="arrow">→</span> power.subsystem<br>
+            <br>
+            network: nominal — no comms fault
+          </div>
+          <div class="step-qs">
+            <p class="q">How to preserve semantic mapping across protocols?</p>
+            <p class="q">Deterministic vs ML-based signal grounding?</p>
+          </div>
+        </div>
+
+        <div class="step" id="step-2">
+          <div class="step-layer">Machine representation</div>
+          <div class="step-title">Building propulsion subgraph</div>
+          <div class="step-items">
+            power → ESC → motor → thruster → thrust output<br>
+            <br>
+            config: firmware v2.3.1, params nominal<br>
+            hardware: thruster age 8mo, last service ok<br>
+            known failure modes: motor fault, ESC fault,<br>
+            prop damage, external obstruction<br>
+            dep graph: power → ESC → motor (all nominal)
+          </div>
+          <div class="step-qs">
+            <p class="q">What is the invariant structure across machine types?</p>
+            <p class="q">How much can be learned vs manually defined?</p>
+          </div>
+        </div>
+
+        <div class="step" id="step-3">
+          <div class="step-layer">Reasoning system — eliminative</div>
+          <div class="step-title">Eliminating candidate causes</div>
+          <div class="step-items">
+            H1: motor fault <span class="arrow">→</span> ruled out (temp normal, no fault code)<br>
+            H2: ESC fault <span class="arrow">→</span> ruled out (current stable, no error)<br>
+            H3: power fault <span class="arrow">→</span> ruled out (power nominal)<br>
+            H4: prop damage <span class="arrow">→</span> ruled out (serviced 14d ago, no vibration)<br>
+            H5: firmware bug <span class="arrow">→</span> ruled out (config matches spec)<br>
+            H6: external obstruction <span class="arrow">→</span> consistent with all evidence<br>
+            <br>
+            env: shallow + kelp zone + low tide → supports H6
+          </div>
+          <div class="step-qs">
+            <p class="q">What counts as sufficient evidence to eliminate?</p>
+            <p class="q">How to handle causes with no direct signal?</p>
+          </div>
+        </div>
+
+        <div class="step" id="step-4">
+          <div class="step-layer">Confidence model</div>
+          <div class="step-title">Scoring the conclusion</div>
+          <div class="step-items">
+            elimination completeness: 5/5 internal causes ruled out<br>
+            evidence match: high (current + speed + env align)<br>
+            historical similarity: 3 prior obstruction incidents<br>
+            alternative hypotheses: none unresolved<br>
+            uncertainty: low (all subsystems observable)<br>
+          </div>
+          <div class="result">
+            <div class="rlabel">Confidence score</div>
+            <div class="rval">84%</div>
+            <div class="rsub">grounded in elimination chain, not a black-box score</div>
+          </div>
+        </div>
+
+        <div class="step" id="step-5">
+          <div class="step-layer">Output</div>
+          <div class="step-title">Diagnostic result</div>
+          <div class="result">
+            <div class="rlabel">Root cause</div>
+            <div class="rval">External obstruction — propulsion</div>
+            <div class="rsub">seaweed or debris in thruster. Not detected by any sensor directly.</div>
+          </div>
+          <div class="step-items" style="margin-top:10px">
+            confidence: 84%<br>
+            eliminated: motor · ESC · power · prop · firmware<br>
+            supporting: high current + env context + history<br>
+            action: surface + manual thruster inspection
+          </div>
+        </div>
+
+        <div class="step" id="step-6">
+          <div class="step-layer">Learning model</div>
+          <div class="step-title">Updating from this incident</div>
+          <div class="step-items">
+            store: obstruction incident + full elimination chain<br>
+            update: kelp zone + low tide → obstruction prior ↑<br>
+            rule added: depth &lt; 1m + coastal → check env first<br>
+            pattern: 4th obstruction incident this season<br>
+            feeds back → machine representation + reasoning
+          </div>
+          <div class="step-qs">
+            <p class="q">How to validate before learning?</p>
+            <p class="q">How to transfer pattern to other marine machines?</p>
+          </div>
+        </div>
+
+        <div class="hint">click a layer to trace the execution</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function select(id){
+  document.querySelectorAll('.layer,.learn').forEach(el=>{
+    const eid=parseInt(el.dataset.id);
+    el.classList.toggle('active',eid===id);
+    el.classList.toggle('dim',eid!==id);
+  });
+  document.querySelectorAll('.step').forEach(s=>s.classList.remove('show'));
+  const s=document.getElementById('step-'+id);
+  if(s){s.classList.add('show')}
+  document.querySelector('.hint').style.display='none';
+}
+</script>
